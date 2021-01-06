@@ -1,28 +1,22 @@
 #!/usr/bin/env node
 
-const puppeteer = require('puppeteer');
-const selectors = require('./selectors/facebook');
-const fs = require('fs');
-const inquirer = require('inquirer');
-const minimist = require('minimist');
-const chalk = require('chalk');
-const Configstore = require('configstore');
-const package = require('../package.json');
-const config = new Configstore(
-    package.name,
-    {},
-);
-const arguments = minimist(
-    process.argv.slice(2),
-    {
-      string : [ 'group-ids', 'output' ],
-      boolean : [ 'version', 'help', 'debug', 'headful' ],
-      _ : [ 'init' ],
-      default : {'output' : './'},
-      alias : {h : 'help', v : 'version'},
-      stopEarly : true, /* populate _ with first non-option */
-    },
-);
+const puppeteer = require("puppeteer");
+const selectors = require("./selectors/facebook");
+const fs = require("fs");
+const inquirer = require("inquirer");
+const minimist = require("minimist");
+const chalk = require("chalk");
+const Configstore = require("configstore");
+const package = require("../package.json");
+const config = new Configstore(package.name, {});
+const arguments = minimist(process.argv.slice(2), {
+  string: ["group-ids", "output"],
+  boolean: ["version", "help", "debug", "headful"],
+  _: ["init"],
+  default: { output: "./" },
+  alias: { h: "help", v: "version" },
+  stopEarly: true /* populate _ with first non-option */,
+});
 
 /**
  * Function handles the validation of a string.
@@ -30,7 +24,9 @@ const arguments = minimist(
  * @param {string} input the input parameter to validate
  * @return {bool} returns true if the given input is valid
  **/
-function validator(input) { return input.length !== 0; }
+function validator(input) {
+  return input.length !== 0;
+}
 
 /**
  * This callback type is called `validatorCallback` and
@@ -50,16 +46,16 @@ function validator(input) { return input.length !== 0; }
 async function askConfigQuestions(validator) {
   const answers = await inquirer.prompt([
     {
-      name : 'facebook-username',
-      type : 'input',
-      message : 'facebook username:',
-      validate : validator,
+      name: "facebook-username",
+      type: "input",
+      message: "facebook username:",
+      validate: validator,
     },
     {
-      name : 'facebook-password',
-      type : 'password',
-      message : 'password:',
-      validate : validator,
+      name: "facebook-password",
+      type: "password",
+      message: "password:",
+      validate: validator,
     },
   ]);
   return answers;
@@ -83,8 +79,8 @@ async function askConfigQuestions(validator) {
 async function userConfig(askQuestionsFunction, validator) {
   const answers = await askConfigQuestions(validator);
   config.set({
-    username : answers['facebook-username'],
-    password : answers['facebook-password'],
+    username: answers["facebook-username"],
+    password: answers["facebook-password"],
   });
 }
 
@@ -97,7 +93,7 @@ async function userConfig(askQuestionsFunction, validator) {
  **/
 function helpPageLine(command, description) {
   const magenta = chalk.magenta;
-  console.info('  ' + magenta(command) + ':  ' + description);
+  console.info("  " + magenta(command) + ":  " + description);
 }
 
 /**
@@ -118,18 +114,18 @@ function helpPageLine(command, description) {
 *
 */
 function help(helpPageLine) {
-  console.info('Available options:');
+  console.info("Available options:");
   helpPageLine(
-      '--group-ids',
-      '  Indicates which groups ids that we want to' +
-          ' scrape (seperated by commas)',
+    "--group-ids",
+    "  Indicates which groups ids that we want to" +
+      " scrape (seperated by commas)"
   );
-  helpPageLine('-h, --help', '   Shows the help page');
-  helpPageLine('-v, --version', 'Shows the CLI version');
-  helpPageLine('--output', '     Specify the output folder destination');
-  helpPageLine('--headful', '    Disable headless mode');
-  console.info('Available commands:');
-  helpPageLine('init', '         Initialize user configuration');
+  helpPageLine("-h, --help", "   Shows the help page");
+  helpPageLine("-v, --version", "Shows the CLI version");
+  helpPageLine("--output", "     Specify the output folder destination");
+  helpPageLine("--headful", "    Disable headless mode");
+  console.info("Available commands:");
+  helpPageLine("init", "         Initialize user configuration");
 }
 
 /**
@@ -140,9 +136,7 @@ $ @return {void} returns nothing but shows an error message on the console
 *
 */
 function error(message) {
-  console.error(
-      chalk.bold.red('ERROR:') + ' ' + message,
-  );
+  console.error(chalk.bold.red("ERROR:") + " " + message);
 }
 
 /**
@@ -150,7 +144,9 @@ function error(message) {
  * @namespace version
  * @return {void} returns nothing but shows CLI version on console
  **/
-function version() { console.log(package.version); }
+function version() {
+  console.log(package.version);
+}
 
 /**
  * function shows if user configured or not.
@@ -159,8 +155,11 @@ function version() { console.log(package.version); }
  **/
 function isUserConfigured() {
   return (
-      config.get('username') !== undefined && config.get('username') !== null &&
-      config.get('password') !== undefined && config.get('password') !== null);
+    config.get("username") !== undefined &&
+    config.get("username") !== null &&
+    config.get("password") !== undefined &&
+    config.get("password") !== null
+  );
 }
 
 /**
@@ -170,7 +169,9 @@ function isUserConfigured() {
  * @return {void} returns nothing but sleeps for time ms
  **/
 async function sleep(time) {
-  return new Promise(function(resolve) { setTimeout(resolve, time); });
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
 }
 
 /**
@@ -200,16 +201,14 @@ async function autoScroll(page, sleep) {
      * @return {void} returns nothing but sleeps for time ms
      **/
     async function sleep(time) {
-      return new Promise(function(resolve) { setTimeout(resolve, time); });
+      return new Promise(function (resolve) {
+        setTimeout(resolve, time);
+      });
     }
 
-    for (let i = 0; i < Math.round((Math.random() * 10) + 10); i++) {
+    for (let i = 0; i < Math.round(Math.random() * 10 + 10); i++) {
       window.scrollBy(0, document.body.scrollHeight);
-      await sleep(
-          Math.round(
-              (Math.random() * 4000) + 1000,
-              ),
-      );
+      await sleep(Math.round(Math.random() * 4000 + 1000));
     }
     Promise.resolve();
   });
@@ -223,7 +222,7 @@ async function autoScroll(page, sleep) {
  * related to the given Facebook group id
  **/
 function generateFacebookGroupUrlFromId(groupId) {
-  return 'https://m.facebook.com/groups/' + groupId + '/';
+  return "https://m.facebook.com/groups/" + groupId + "/";
 }
 
 /**
@@ -234,19 +233,19 @@ function generateFacebookGroupUrlFromId(groupId) {
  **/
 async function createBrowser(arguments) {
   const browserOptions = {
-    headless : arguments['headful'] === false,
-    args : [
-      '--no-sandbox',
-      '--disable-setuid-sendbox',
-      '--disable-dev-shm-usage',
-      '--disable-accelerated-2d-canvas',
-      '--disable-gpu',
+    headless: arguments["headful"] === false,
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sendbox",
+      "--disable-dev-shm-usage",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
     ],
   };
 
-  if (process.arch === 'arm' || process.arch === 'arm64') {
+  if (process.arch === "arm" || process.arch === "arm64") {
     // If processor architecture is arm or arm64 we need to use chromium browser
-    browserOptions.executablePath = 'chromium-browser';
+    browserOptions.executablePath = "chromium-browser";
   }
 
   const browser = await puppeteer.launch(browserOptions);
@@ -284,19 +283,21 @@ async function incognitoMode(browser) {
 async function setPageListeners(page) {
   await page.setRequestInterception(true);
   const blockResources = [
-    'image',
-    'media',
-    'font',
-    'textrack',
-    'object',
-    'beacon',
-    'csp_report',
-    'imageset',
+    "image",
+    "media",
+    "font",
+    "textrack",
+    "object",
+    "beacon",
+    "csp_report",
+    "imageset",
   ];
-  page.on('request', (request) => {
+  page.on("request", (request) => {
     const rt = request.resourceType();
-    if (blockResources.indexOf(rt) > 0 ||
-        request.url().match(/\.((jpe?g)|png|gif)/) != null) {
+    if (
+      blockResources.indexOf(rt) > 0 ||
+      request.url().match(/\.((jpe?g)|png|gif)/) != null
+    ) {
       request.abort();
     } else {
       request.continue();
@@ -324,15 +325,16 @@ async function setPageListeners(page) {
 */
 async function facebookLogIn(arguments, page, setPageListeners) {
   // Goes to base facebook url
-  await page.goto('https://facebook.com');
+  await page.goto("https://facebook.com");
   try {
-    await page.waitForXPath('//button[@data\-cookiebanner="accept_button"]');
-    var acceptCookiesButton =
-        (await page.$x('//button[@data\-cookiebanner="accept_button"]'))[0];
-    await page.evaluate(el => {
+    await page.waitForXPath('//button[@data-cookiebanner="accept_button"]');
+    var acceptCookiesButton = (
+      await page.$x('//button[@data-cookiebanner="accept_button"]')
+    )[0];
+    await page.evaluate((el) => {
       el.focus();
       el.click();
-    }, acceptCookiesButton)
+    }, acceptCookiesButton);
   } catch (error) {
     console.log("Nema kuki banera mbrale :(((");
   }
@@ -346,16 +348,18 @@ async function facebookLogIn(arguments, page, setPageListeners) {
   // Clicking on the email form input to be able to type on input
   await page.focus(selectors.login_form.email);
   // Typing on the email input the email address
-  await page.keyboard.type(config.get('username'));
+  await page.keyboard.type(config.get("username"));
   // Focusing on the password input
   await page.focus(selectors.login_form.password);
   // Typing the facebook password on password input
-  await page.keyboard.type(config.get('password'));
+  await page.keyboard.type(config.get("password"));
   // Clicking on the submit button
-  await page.waitForXPath("//button[contains(., 'Log In')]")
+  await page.waitForXPath("//button[contains(., 'Log In')]");
   const [loginButton] = await page.$x("//button[contains(., 'Log In')]");
-  await page.evaluate((el) => { el.click(); }, loginButton);
-  await page.waitForXPath('//div[@data\-pagelet="Stories"]');
+  await page.evaluate((el) => {
+    el.click();
+  }, loginButton);
+  await page.waitForXPath('//div[@data-pagelet="Stories"]');
   await setPageListeners(page);
   return page;
 }
@@ -371,7 +375,7 @@ function getOldPublications(fileName) {
   if (fs.existsSync(fileName) === true) {
     // If file exists
     allPublicationsList = JSON.parse(
-        fs.readFileSync(fileName, {encoding : 'utf8'}),
+      fs.readFileSync(fileName, { encoding: "utf8" })
     );
   } else {
     // If file does not exists
@@ -417,19 +421,16 @@ scrolling automatically
 *
 */
 async function facebookMain(
-    arguments,
-    groupUrl,
-    page,
-    id,
-    getOldPublications,
-    autoScroll,
-    sleep,
+  arguments,
+  groupUrl,
+  page,
+  id,
+  getOldPublications,
+  autoScroll,
+  sleep
 ) {
   // Navigates to the first facebook group Türk Ögrenciler - Paris
-  await page.goto(
-      groupUrl,
-      {timeout : 600000},
-  );
+  await page.goto(groupUrl, { timeout: 600000 });
 
   /**
    * Waiting for the group stories container to continue
@@ -437,56 +438,54 @@ async function facebookMain(
    **/
   // Getting all Facebook group posts
 
-  const groupNameHtmlElement = (await page.$x('/html/head/title'))[0];
-  let groupName = await page.evaluate(
-      (el) => { return el.textContent; },
-      groupNameHtmlElement,
-  );
-  if (arguments['debug'] === true) {
-    console.log('Group title ' + groupName);
+  const groupNameHtmlElement = (await page.$x("/html/head/title"))[0];
+  let groupName = await page.evaluate((el) => {
+    return el.textContent;
+  }, groupNameHtmlElement);
+  if (arguments["debug"] === true) {
+    console.log("Group title " + groupName);
   }
 
-  groupName = groupName.replace(/\//g, '_');
-  const fileName = arguments['output'] + groupName + '.json';
+  groupName = groupName.replace(/\//g, "_");
+  const fileName = arguments["output"] + groupName + ".json";
 
   const allPublicationsList = getOldPublications(fileName);
 
   // List contains all publications
   // Variable indicates if any new posts found on the page
   do {
-    if (arguments['debug'] === true) {
+    if (arguments["debug"] === true) {
       console.log(`Total posts before scraping ${allPublicationsList.length}`);
     }
     // eslint-disable-next-line no-var
     var isAnyNewPosts = false;
-    await page.waitForXPath(
-        '//article/div[@class="story_body_container"]',
-    );
+    await page.waitForXPath('//article/div[@class="story_body_container"]');
     const groupPostsHtmlElements = await page.$x(
-        '//article/div[@class="story_body_container"]/div[1]',
+      '//article/div[@class="story_body_container"]/div[1]'
     );
     const groupPostsAuthorHtmlElemments = await page.$x(
-        '((//article/div[@class="story_body_container"])' +
-            '[child::div])/header//strong[1]',
+      '((//article/div[@class="story_body_container"])' +
+        "[child::div])/header//strong[1]"
     );
 
     // Looping on each group post html elemen to get text and author
     for (let i = 0; i < groupPostsAuthorHtmlElemments.length; i++) {
       console.log(`i=${i}`);
       const [postAuthorName, postTextContent] = await page.evaluate(
-          (el, eb) => {
-            return [ el.textContent, eb.textContent ];
-          },
-          groupPostsAuthorHtmlElemments[i],
-          groupPostsHtmlElements[i],
+        (el, eb) => {
+          return [el.textContent, eb.textContent];
+        },
+        groupPostsAuthorHtmlElemments[i],
+        groupPostsHtmlElements[i]
       );
       const postContent = await groupPostsAuthorHtmlElemments[i].$x(
-          '//article/div[@class="story_body_container"]//span[1]/p');
+        '//article/div[@class="story_body_container"]//span[1]/p'
+      );
 
       // crates a publication object which contains our publication
       const publication = {
-        post : postAuthorName,
-        author : postTextContent,
+        post: postAuthorName,
+        author: postTextContent,
       };
 
       // variable indicates if publication exists in allPublicationsList
@@ -495,8 +494,10 @@ async function facebookMain(
       // Check if publication exists in allPublicationsList
       for (let a = 0; a < allPublicationsList.length; a++) {
         const otherPublication = allPublicationsList[a];
-        if ((publication.post === otherPublication.post) &&
-            (publication.author === otherPublication.author)) {
+        if (
+          publication.post === otherPublication.post &&
+          publication.author === otherPublication.author
+        ) {
           // If publication exists in allPublictationList
           isPublicationExists = true;
           break;
@@ -520,8 +521,8 @@ async function facebookMain(
      * All html group post elements are added on
      * global publictions list (allPublictionList)
      **/
-    if (arguments['debug'] === true) {
-      console.log('Total posts before scrolling' + allPublicationsList.length);
+    if (arguments["debug"] === true) {
+      console.log("Total posts before scrolling" + allPublicationsList.length);
     }
     /**
      *  console.log(`Total posts before
@@ -532,13 +533,15 @@ async function facebookMain(
     await autoScroll(page, sleep);
   } while (isAnyNewPosts === true);
   console.info(
-      groupName + ' Facebook group\'s posts scraped: ' +
-          allPublicationsList.length + ' posts found',
+    groupName +
+      " Facebook group's posts scraped: " +
+      allPublicationsList.length +
+      " posts found"
   );
   fs.writeFileSync(
-      fileName,
-      JSON.stringify(allPublicationsList, undefined, 4),
-      {encoding : 'utf8'},
+    fileName,
+    JSON.stringify(allPublicationsList, undefined, 4),
+    { encoding: "utf8" }
   );
   // await browser.close();
 }
@@ -571,86 +574,93 @@ sleeping the current process
 *
 */
 async function main(
-    arguments,
-    askQuestionsFunction,
-    validator,
-    createBrowser,
-    incognitoMode,
-    setPageListeners,
-    generateFacebookGroupUrlFromId,
-    facebookMain,
-    getOldPublications,
-    autoScroll,
-    sleep,
+  arguments,
+  askQuestionsFunction,
+  validator,
+  createBrowser,
+  incognitoMode,
+  setPageListeners,
+  generateFacebookGroupUrlFromId,
+  facebookMain,
+  getOldPublications,
+  autoScroll,
+  sleep
 ) {
   if (isUserConfigured() === false) {
     await userConfig(askQuestionsFunction, validator);
   }
 
-  const facebookGroupIdList = arguments['group-ids'].split(',');
+  const facebookGroupIdList = arguments["group-ids"].split(",");
   const browser = await createBrowser(arguments);
   let page = await incognitoMode(browser);
   await page.setUserAgent(
-      "User agent Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.0 Safari/537.36");
+    "User agent Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.0 Safari/537.36"
+  );
   page = await facebookLogIn(arguments, page, setPageListeners);
   // for (var i = 0; i < facebookGroupIdList.length; i++) {
   for (let i = 0; i < facebookGroupIdList.length; i++) {
     const id = facebookGroupIdList[i];
     const groupUrl = generateFacebookGroupUrlFromId(id);
     await facebookMain(
-        arguments,
-        groupUrl,
-        page,
-        id,
-        getOldPublications,
-        autoScroll,
-        sleep,
+      arguments,
+      groupUrl,
+      page,
+      id,
+      getOldPublications,
+      autoScroll,
+      sleep
     );
   }
   await browser.close();
 }
 
-if (fs.existsSync(arguments['output']) === false ||
-    fs.lstatSync(arguments['output']).isDirectory() === false) {
+if (
+  fs.existsSync(arguments["output"]) === false ||
+  fs.lstatSync(arguments["output"]).isDirectory() === false
+) {
   // output is not exists or not a directory
   error(
-      arguments['output'] + 'does not exists or is not a directory. ' +
-          'Please retry with an existing directory path',
+    arguments["output"] +
+      "does not exists or is not a directory. " +
+      "Please retry with an existing directory path"
   );
   process.exit(1);
 }
 
-if (arguments['help'] === true) {
+if (arguments["help"] === true) {
   help(helpPageLine);
   process.exit(0);
 }
 
-if (arguments['version'] === true) {
+if (arguments["version"] === true) {
   version();
   process.exit(0);
 }
 
 // if (arguments['_'].includes('init')) {
-if (arguments['_'].indexOf('init') !== -1) {
-  userConfig(askConfigQuestions, validator).then(() => { process.exit(0); });
+if (arguments["_"].indexOf("init") !== -1) {
+  userConfig(askConfigQuestions, validator).then(() => {
+    process.exit(0);
+  });
 } else {
-  if (arguments['group-ids'] !== undefined && arguments['group-ids'] !== null) {
+  if (arguments["group-ids"] !== undefined && arguments["group-ids"] !== null) {
     main(
-        arguments,
-        askConfigQuestions,
-        validator,
-        createBrowser,
-        incognitoMode,
-        setPageListeners,
-        generateFacebookGroupUrlFromId,
-        facebookMain,
-        getOldPublications,
-        autoScroll,
-        sleep,
-        )
-        .then(() => { console.log('Facebook group scraping done'); });
+      arguments,
+      askConfigQuestions,
+      validator,
+      createBrowser,
+      incognitoMode,
+      setPageListeners,
+      generateFacebookGroupUrlFromId,
+      facebookMain,
+      getOldPublications,
+      autoScroll,
+      sleep
+    ).then(() => {
+      console.log("Facebook group scraping done");
+    });
   } else {
-    error('No argument specified. Please check help page for valid arguments');
+    error("No argument specified. Please check help page for valid arguments");
     help(helpPageLine);
     process.exit(1);
   }
