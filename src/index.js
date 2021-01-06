@@ -15,53 +15,51 @@ const config = new Configstore(
 const arguments = minimist(
     process.argv.slice(2),
     {
-      string: ['group-ids', 'output'],
-      boolean: ['version', 'help', 'debug', 'headful'],
-      _: ['init'],
-      default: {'output': './'},
-      alias: {h: 'help', v: 'version'},
-      stopEarly: true, /* populate _ with first non-option */
+      string : [ 'group-ids', 'output' ],
+      boolean : [ 'version', 'help', 'debug', 'headful' ],
+      _ : [ 'init' ],
+      default : {'output' : './'},
+      alias : {h : 'help', v : 'version'},
+      stopEarly : true, /* populate _ with first non-option */
     },
 );
 
 /**
-* Function handles the validation of a string.
-* @namespace validator
-* @param {string} input the input parameter to validate
-* @return {bool} returns true if the given input is valid
-**/
-function validator(input) {
-  return input.length !== 0;
-}
+ * Function handles the validation of a string.
+ * @namespace validator
+ * @param {string} input the input parameter to validate
+ * @return {bool} returns true if the given input is valid
+ **/
+function validator(input) { return input.length !== 0; }
 
 /**
-  * This callback type is called `validatorCallback` and
-  * is displayed as a global symbol.
-  * @callback validatorCallback
-  * @param {string} input
-  * @return {boolean} returns true if the input is valid
+ * This callback type is called `validatorCallback` and
+ * is displayed as a global symbol.
+ * @callback validatorCallback
+ * @param {string} input
+ * @return {boolean} returns true if the input is valid
  */
 
 /**
-  * Function gets the user configuration information by asking
-  *  related questions to user.
-  * @namespace askConfigQuestions
-  * @param {validatorCallback} validator function to validate the user input
-  * @return {Object} returns answer object got from the user
-**/
+ * Function gets the user configuration information by asking
+ *  related questions to user.
+ * @namespace askConfigQuestions
+ * @param {validatorCallback} validator function to validate the user input
+ * @return {Object} returns answer object got from the user
+ **/
 async function askConfigQuestions(validator) {
   const answers = await inquirer.prompt([
     {
-      name: 'facebook-username',
-      type: 'input',
-      message: 'facebook username:',
-      validate: validator,
+      name : 'facebook-username',
+      type : 'input',
+      message : 'facebook username:',
+      validate : validator,
     },
     {
-      name: 'facebook-password',
-      type: 'password',
-      message: 'password:',
-      validate: validator,
+      name : 'facebook-password',
+      type : 'password',
+      message : 'password:',
+      validate : validator,
     },
   ]);
   return answers;
@@ -76,27 +74,27 @@ async function askConfigQuestions(validator) {
  */
 
 /**
-* Function handles the user configuration in CLI
-* @namespace userConfig
-* @param {askQuestionsFunction} askQuestionsFunction
-* @param {validatorCallback} validator
-* @return {void} reutrns nothing but handles the user configuration acton
-**/
+ * Function handles the user configuration in CLI
+ * @namespace userConfig
+ * @param {askQuestionsFunction} askQuestionsFunction
+ * @param {validatorCallback} validator
+ * @return {void} reutrns nothing but handles the user configuration acton
+ **/
 async function userConfig(askQuestionsFunction, validator) {
   const answers = await askConfigQuestions(validator);
   config.set({
-    username: answers['facebook-username'],
-    password: answers['facebook-password'],
+    username : answers['facebook-username'],
+    password : answers['facebook-password'],
   });
 }
 
 /**
-* Function show a help page line on the console.
-* @namespace helpPageLine
-* @param {string} command command name to show
-* @param {string} description command description to show
-* @return {void} returns nothing but shows the help page line on the console
-**/
+ * Function show a help page line on the console.
+ * @namespace helpPageLine
+ * @param {string} command command name to show
+ * @param {string} description command description to show
+ * @return {void} returns nothing but shows the help page line on the console
+ **/
 function helpPageLine(command, description) {
   const magenta = chalk.magenta;
   console.info('  ' + magenta(command) + ':  ' + description);
@@ -117,13 +115,14 @@ function helpPageLine(command, description) {
 * @param {helpPageLineCallback} helpPageLine Function that logs a help
  page line with given parameters
 * @return {void} returns nothing but shows help page on the console.
-**/
+*
+*/
 function help(helpPageLine) {
   console.info('Available options:');
   helpPageLine(
       '--group-ids',
       '  Indicates which groups ids that we want to' +
-      ' scrape (seperated by commas)',
+          ' scrape (seperated by commas)',
   );
   helpPageLine('-h, --help', '   Shows the help page');
   helpPageLine('-v, --version', 'Shows the CLI version');
@@ -138,48 +137,40 @@ function help(helpPageLine) {
 * @namespace error
 * @param {string} message message to display.
 $ @return {void} returns nothing but shows an error message on the console
-**/
+*
+*/
 function error(message) {
   console.error(
-      chalk.bold.red('ERROR:') +
-        ' ' +
-        message,
+      chalk.bold.red('ERROR:') + ' ' + message,
   );
 }
 
 /**
-* function shows the version of CLI.
-* @namespace version
-* @return {void} returns nothing but shows CLI version on console
-**/
-function version() {
-  console.log(package.version);
-}
+ * function shows the version of CLI.
+ * @namespace version
+ * @return {void} returns nothing but shows CLI version on console
+ **/
+function version() { console.log(package.version); }
 
 /**
-* function shows if user configured or not.
-* @namespace isUserConfigured
-* @return {bool} returns if user configured or not.
-**/
+ * function shows if user configured or not.
+ * @namespace isUserConfigured
+ * @return {bool} returns if user configured or not.
+ **/
 function isUserConfigured() {
   return (
-    config.get('username') !== undefined &&
-    config.get('username') !== null &&
-    config.get('password') !== undefined &&
-    config.get('password') !== null
-  );
+      config.get('username') !== undefined && config.get('username') !== null &&
+      config.get('password') !== undefined && config.get('password') !== null);
 }
 
 /**
-* Function sleeps the current process for given number of milliseconds
-* @namespace sleep
-* @param {int} time parameter description
-* @return {void} returns nothing but sleeps for time ms
-**/
+ * Function sleeps the current process for given number of milliseconds
+ * @namespace sleep
+ * @param {int} time parameter description
+ * @return {void} returns nothing but sleeps for time ms
+ **/
 async function sleep(time) {
-  return new Promise(function(resolve) {
-    setTimeout(resolve, time);
-  });
+  return new Promise(function(resolve) { setTimeout(resolve, time); });
 }
 
 /**
@@ -198,19 +189,18 @@ async function sleep(time) {
 * @param {sleepFunctionCallback} sleep The function used for
 sleeping the current process
 * @return {void} returns nothing but scrolls the page.
-**/
+*
+*/
 async function autoScroll(page, sleep) {
   await page.evaluate(async () => {
     /**
-    * Function sleeps the current process for given number of milliseconds
-    * @namespace sleep
-    * @param {int} time parameter description
-    * @return {void} returns nothing but sleeps for time ms
-    **/
+     * Function sleeps the current process for given number of milliseconds
+     * @namespace sleep
+     * @param {int} time parameter description
+     * @return {void} returns nothing but sleeps for time ms
+     **/
     async function sleep(time) {
-      return new Promise(function(resolve) {
-        setTimeout(resolve, time);
-      });
+      return new Promise(function(resolve) { setTimeout(resolve, time); });
     }
 
     for (let i = 0; i < Math.round((Math.random() * 10) + 10); i++) {
@@ -218,7 +208,7 @@ async function autoScroll(page, sleep) {
       await sleep(
           Math.round(
               (Math.random() * 4000) + 1000,
-          ),
+              ),
       );
     }
     Promise.resolve();
@@ -226,26 +216,26 @@ async function autoScroll(page, sleep) {
 }
 
 /**
-* Funciton generates the Facebook group URL from the given group id.
-* @namespace generateFacebookGroupUrlFromId
-* @param {string} groupId facebook group id
-* @return {string} returns the Facebook group url
-* related to the given Facebook group id
-**/
+ * Funciton generates the Facebook group URL from the given group id.
+ * @namespace generateFacebookGroupUrlFromId
+ * @param {string} groupId facebook group id
+ * @return {string} returns the Facebook group url
+ * related to the given Facebook group id
+ **/
 function generateFacebookGroupUrlFromId(groupId) {
   return 'https://m.facebook.com/groups/' + groupId + '/';
 }
 
 /**
-* function creates a browser instance.
-* @namespace createBrowser
-* @param {Object} arguments Comamnd line arguments parsed from user input
-* @return {Browser} returns the Browser object
-**/
+ * function creates a browser instance.
+ * @namespace createBrowser
+ * @param {Object} arguments Comamnd line arguments parsed from user input
+ * @return {Browser} returns the Browser object
+ **/
 async function createBrowser(arguments) {
   const browserOptions = {
-    headless: arguments['headful'] === false,
-    args: [
+    headless : arguments['headful'] === false,
+    args : [
       '--no-sandbox',
       '--disable-setuid-sendbox',
       '--disable-dev-shm-usage',
@@ -269,7 +259,8 @@ async function createBrowser(arguments) {
 * @param {Browser} browser The browser object that we want to create
  the incognito page
 * @return {Page} returns the page in the incognito mode
-**/
+*
+*/
 async function incognitoMode(browser) {
   /**
    * We need an incognito browser to avoid notification
@@ -288,19 +279,24 @@ async function incognitoMode(browser) {
 * @return {void} returns nothing but configures listeners on the given
  page to avoid to load
 * unnecessart content
-**/
+*
+*/
 async function setPageListeners(page) {
   await page.setRequestInterception(true);
   const blockResources = [
-    'image', 'media', 'font', 'textrack', 'object',
-    'beacon', 'csp_report', 'imageset',
+    'image',
+    'media',
+    'font',
+    'textrack',
+    'object',
+    'beacon',
+    'csp_report',
+    'imageset',
   ];
   page.on('request', (request) => {
     const rt = request.resourceType();
-    if (
-      blockResources.indexOf(rt) > 0 ||
-            request.url().match(/\.((jpe?g)|png|gif)/) != null
-    ) {
+    if (blockResources.indexOf(rt) > 0 ||
+        request.url().match(/\.((jpe?g)|png|gif)/) != null) {
       request.abort();
     } else {
       request.continue();
@@ -324,24 +320,26 @@ async function setPageListeners(page) {
 * @param {setPageListenersCallback} setPageListeners the function that
  sets the page listeners to speed up
 * @return {Page} returns the page when the user logged in
-**/
+*
+*/
 async function facebookLogIn(arguments, page, setPageListeners) {
   // Goes to base facebook url
   await page.goto('https://facebook.com');
   try {
-  await page.waitForXPath('//button[@data\-cookiebanner="accept_button"]');
-  var acceptCookiesButton = (await page.$x('//button[@data\-cookiebanner="accept_button"]'))[0];
-  await page.evaluate(el => {
-    el.focus();
-    el.click();
-  }, acceptCookiesButton)
-  } catch(error) {
-    console.log("Nema kuki banera mbrale :(((");   
+    await page.waitForXPath('//button[@data\-cookiebanner="accept_button"]');
+    var acceptCookiesButton =
+        (await page.$x('//button[@data\-cookiebanner="accept_button"]'))[0];
+    await page.evaluate(el => {
+      el.focus();
+      el.click();
+    }, acceptCookiesButton)
+  } catch (error) {
+    console.log("Nema kuki banera mbrale :(((");
   }
   /**
    * Waiting for login form JQuery selector to avoid
    * that forms elements to be not found
-  **/
+   **/
   await page.waitForSelector(selectors.login_form.parent);
   // Focusing to the email input
   await page.focus(selectors.login_form.email);
@@ -356,26 +354,24 @@ async function facebookLogIn(arguments, page, setPageListeners) {
   // Clicking on the submit button
   await page.waitForXPath("//button[contains(., 'Log In')]")
   const [loginButton] = await page.$x("//button[contains(., 'Log In')]");
-  await page.evaluate((el) => {
-    el.click();
-  }, loginButton);
+  await page.evaluate((el) => { el.click(); }, loginButton);
   await page.waitForXPath('//div[@data\-pagelet="Stories"]');
   await setPageListeners(page);
   return page;
 }
 
 /**
-* function gets old publications.
-* @namespace getOldPublications
-* @param {type} fileName name of the file
-* @return {Object[]} returns the list of all publications.
-**/
+ * function gets old publications.
+ * @namespace getOldPublications
+ * @param {type} fileName name of the file
+ * @return {Object[]} returns the list of all publications.
+ **/
 function getOldPublications(fileName) {
   let allPublicationsList;
   if (fs.existsSync(fileName) === true) {
     // If file exists
     allPublicationsList = JSON.parse(
-        fs.readFileSync(fileName, {encoding: 'utf8'}),
+        fs.readFileSync(fileName, {encoding : 'utf8'}),
     );
   } else {
     // If file does not exists
@@ -395,14 +391,14 @@ function getOldPublications(fileName) {
  */
 
 /**
-  * The callback function called autoScrollFunction and
-  * displayed as a global type
-  * @callback getAutoScrollFunction
-  * @param {Page} page The page that we want to scroll
-  * @param {sleepFunctionCallback} sleep The sleep function that
-  * we are using for waiting before scroll
-  * @return {Page} The scrolled page
-  */
+ * The callback function called autoScrollFunction and
+ * displayed as a global type
+ * @callback getAutoScrollFunction
+ * @param {Page} page The page that we want to scroll
+ * @param {sleepFunctionCallback} sleep The sleep function that
+ * we are using for waiting before scroll
+ * @return {Page} The scrolled page
+ */
 
 /**
 * Function handles the main execution of the Facebook bot.
@@ -418,7 +414,8 @@ scrolling automatically
 * @param {sleepFunctionCallback} sleep The sleep function that
  we use in autoScroll
 * @return {void} returns nothing but scrape all questions from specific groups
-**/
+*
+*/
 async function facebookMain(
     arguments,
     groupUrl,
@@ -431,26 +428,24 @@ async function facebookMain(
   // Navigates to the first facebook group Türk Ögrenciler - Paris
   await page.goto(
       groupUrl,
-      {timeout: 600000},
+      {timeout : 600000},
   );
 
   /**
    * Waiting for the group stories container to continue
    * and to avoid the selector not found error
-  **/
+   **/
   // Getting all Facebook group posts
 
   const groupNameHtmlElement = (await page.$x('/html/head/title'))[0];
   let groupName = await page.evaluate(
-      (el)=> {
-        return el.textContent;
-      },
+      (el) => { return el.textContent; },
       groupNameHtmlElement,
   );
   if (arguments['debug'] === true) {
     console.log('Group title ' + groupName);
   }
-  
+
   groupName = groupName.replace(/\//g, '_');
   const fileName = arguments['output'] + groupName + '.json';
 
@@ -472,39 +467,36 @@ async function facebookMain(
     );
     const groupPostsAuthorHtmlElemments = await page.$x(
         '((//article/div[@class="story_body_container"])' +
-        '[child::div])/header//strong[1]',
+            '[child::div])/header//strong[1]',
     );
-     
 
     // Looping on each group post html elemen to get text and author
     for (let i = 0; i < groupPostsAuthorHtmlElemments.length; i++) {
       console.log(`i=${i}`);
       const [postAuthorName, postTextContent] = await page.evaluate(
-          (el,eb) => {
-            return [el.textContent, eb.textContent];
+          (el, eb) => {
+            return [ el.textContent, eb.textContent ];
           },
           groupPostsAuthorHtmlElemments[i],
           groupPostsHtmlElements[i],
       );
-      const postContent = await groupPostsAuthorHtmlElemments[i].$x('//article/div[@class="story_body_container"]//span[1]/p');
-
+      const postContent = await groupPostsAuthorHtmlElemments[i].$x(
+          '//article/div[@class="story_body_container"]//span[1]/p');
 
       // crates a publication object which contains our publication
       const publication = {
-        post: postAuthorName,
-        author: postTextContent,
+        post : postAuthorName,
+        author : postTextContent,
       };
 
       // variable indicates if publication exists in allPublicationsList
       let isPublicationExists = false;
 
       // Check if publication exists in allPublicationsList
-      for (let a = 0; a<allPublicationsList.length; a++) {
+      for (let a = 0; a < allPublicationsList.length; a++) {
         const otherPublication = allPublicationsList[a];
-        if (
-          (publication.post === otherPublication.post) &&
-                    (publication.author === otherPublication.author)
-        ) {
+        if ((publication.post === otherPublication.post) &&
+            (publication.author === otherPublication.author)) {
           // If publication exists in allPublictationList
           isPublicationExists = true;
           break;
@@ -517,7 +509,7 @@ async function facebookMain(
       /**
        * Once we got the response from the check
        * publication in allPublicationsList
-      **/
+       **/
       if (isPublicationExists === false) {
         allPublicationsList.push(publication);
         isAnyNewPosts = true;
@@ -534,24 +526,21 @@ async function facebookMain(
     /**
      *  console.log(`Total posts before
      * scrolling ${allPublicationsList.length}`);
-    **/
+     **/
     // Both console.log statement above are same
-
 
     await autoScroll(page, sleep);
   } while (isAnyNewPosts === true);
   console.info(
-      groupName +
-      ' Facebook group\'s posts scraped: ' +
-      allPublicationsList.length +
-      ' posts found',
+      groupName + ' Facebook group\'s posts scraped: ' +
+          allPublicationsList.length + ' posts found',
   );
   fs.writeFileSync(
       fileName,
       JSON.stringify(allPublicationsList, undefined, 4),
-      {encoding: 'utf8'},
+      {encoding : 'utf8'},
   );
-// await browser.close();
+  // await browser.close();
 }
 
 /**
@@ -579,7 +568,8 @@ function sets the page
 sleeping the current process
 * @return {void} returns nothing but calls the FacebookMain
 * function for each groupId once logged in
-**/
+*
+*/
 async function main(
     arguments,
     askQuestionsFunction,
@@ -600,7 +590,8 @@ async function main(
   const facebookGroupIdList = arguments['group-ids'].split(',');
   const browser = await createBrowser(arguments);
   let page = await incognitoMode(browser);
-  await page.setUserAgent("User agent Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.0 Safari/537.36");
+  await page.setUserAgent(
+      "User agent Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.0 Safari/537.36");
   page = await facebookLogIn(arguments, page, setPageListeners);
   // for (var i = 0; i < facebookGroupIdList.length; i++) {
   for (let i = 0; i < facebookGroupIdList.length; i++) {
@@ -619,15 +610,12 @@ async function main(
   await browser.close();
 }
 
-if (
-  fs.existsSync(arguments['output']) === false ||
-    fs.lstatSync(arguments['output']).isDirectory() === false
-) {
+if (fs.existsSync(arguments['output']) === false ||
+    fs.lstatSync(arguments['output']).isDirectory() === false) {
   // output is not exists or not a directory
   error(
-      arguments['output'] +
-      'does not exists or is not a directory. '+
-      'Please retry with an existing directory path',
+      arguments['output'] + 'does not exists or is not a directory. ' +
+          'Please retry with an existing directory path',
   );
   process.exit(1);
 }
@@ -644,9 +632,7 @@ if (arguments['version'] === true) {
 
 // if (arguments['_'].includes('init')) {
 if (arguments['_'].indexOf('init') !== -1) {
-  userConfig(askConfigQuestions, validator).then(() => {
-    process.exit(0);
-  });
+  userConfig(askConfigQuestions, validator).then(() => { process.exit(0); });
 } else {
   if (arguments['group-ids'] !== undefined && arguments['group-ids'] !== null) {
     main(
@@ -661,9 +647,8 @@ if (arguments['_'].indexOf('init') !== -1) {
         getOldPublications,
         autoScroll,
         sleep,
-    ).then(() => {
-      console.log('Facebook group scraping done');
-    });
+        )
+        .then(() => { console.log('Facebook group scraping done'); });
   } else {
     error('No argument specified. Please check help page for valid arguments');
     help(helpPageLine);
